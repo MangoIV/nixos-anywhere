@@ -450,11 +450,11 @@ if [[ -n ${disko_script-} ]]; then
 elif [[ ${build_on_remote-n} == "y" ]]; then
   step Building disko script
   # We need to do a nix copy first because nix build doesn't have --no-check-sigs
-  nix_copy --to "ssh-ng://$ssh_connection" "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.diskoScript" \
+  nix_copy --to "ssh://$ssh_connection" "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.diskoScript" \
     --derivation --no-check-sigs
   disko_script=$(
     nix_build "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.diskoScript" \
-      --eval-store auto --store "ssh-ng://$ssh_connection?ssh-key=$ssh_key_dir/nixos-anywhere"
+      --eval-store auto --store "ssh://$ssh_connection?ssh-key=$ssh_key_dir/nixos-anywhere"
   )
 fi
 
@@ -474,11 +474,11 @@ if [[ -n ${nixos_system-} ]]; then
 elif [[ ${build_on_remote-n} == "y" ]]; then
   step Building the system closure
   # We need to do a nix copy first because nix build doesn't have --no-check-sigs
-  nix_copy --to "ssh-ng://$ssh_connection?remote-store=local?root=/mnt" "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.toplevel" \
+  nix_copy --to "ssh://$ssh_connection?remote-store=local?root=/mnt" "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.toplevel" \
     --derivation --no-check-sigs
   nixos_system=$(
     nix_build "${flake}#nixosConfigurations.\"${flakeAttr}\".config.system.build.toplevel" \
-      --eval-store auto --store "ssh-ng://$ssh_connection?ssh-key=$ssh_key_dir/nixos-anywhere&remote-store=local?root=/mnt"
+      --eval-store auto --store "ssh://$ssh_connection?ssh-key=$ssh_key_dir/nixos-anywhere&remote-store=local?root=/mnt"
   )
 fi
 
